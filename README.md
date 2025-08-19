@@ -5,9 +5,9 @@
 
 ## Project Structure
 
-## Neurons (The API)
+### Neurons (The API)
 
-### Project Files
+#### Project Files
 - **extract_pdf.py**  
   Provides helper functions for extracting brand compliance information from PDF files using PyMuPDF (`fitz`).  
   Extracts: font styles, logo safe zone, logo colours, and full colour palette.
@@ -23,6 +23,8 @@
   - Extracting brand compliance info from PDFs
   - Building structured compliance prompts
   - Evaluating brand compliance of images using an LLM
+
+
 
 ## Documentation
 ...
