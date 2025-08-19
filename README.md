@@ -25,10 +25,8 @@
   - Evaluating brand compliance of images using an LLM
 
 ### Neurons_Blazor (Blazor Web Application)
+The most important part of the code is the **image_evaluation.razor**. This is a Blazor front-end page that provides a user interface for testing brand compliance evaluation. It connects directly to the FastAPI backend and allows users to upload assets, choose a model, and view evaluation results.
 
-#### Description of the Web Application Implementation:
-
-- The most important part of the code is the **image_evaluation.razor**. This is a Blazor front-end page that provides a user interface for testing brand compliance evaluation. It connects directly to the FastAPI backend and allows users to upload assets, choose a model, and view evaluation results.
 **Main Features**
 - **Upload controls** (left column):
   - Upload an **image** (preview is displayed).
