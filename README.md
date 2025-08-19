@@ -1,5 +1,20 @@
 # Project Structure & Brief description/documentation
 
+## Table of Contents
+- [Project Structure & Documentation](#project-structure--brief-descriptiondocumentation)
+  - [Neurons (The API)](#neurons-the-api)
+    - [Project Files](#project-files)
+  - [Neurons_Blazor (Blazor Web Application)](#neurons_blazor-blazor-web-application)
+- [Running the Project](#running-the-project)
+  - [Using Docker (recommended)](#using-docker-recommended)
+  - [Development mode](#development-mode)
+    - [Backend (FastAPI)](#backend-fastapi)
+    - [Frontend (Blazor)](#frontend-blazor)
+- [Usage Example](#usage-example)
+- [Testing](#testing)
+- [Configure secrets](#configure-secrets)
+
+
 ## Neurons (The API)
 
 ### Project Files
