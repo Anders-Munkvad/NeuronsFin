@@ -4,9 +4,12 @@ from io import BytesIO
 from fastapi import Form
 import logging
 
-from app.image_evaluation import GPT_4o_response
+#from app.image_evaluation_Qwen import Qwen_response
+#from app.compliance_prompt_Qwen import build_compliance_prompt_qwen
 from app.extract_pdf import extract_brand_compliance
-from app.compliance_prompt import build_compliance_prompt
+from app.compliance_prompt_gpt import build_compliance_prompt
+from app.image_evaluation_gpt import GPT_4o_response
+
 
 logging.basicConfig(level=logging.INFO)
 app = FastAPI()
@@ -34,14 +37,6 @@ async def upload_pdf(file: UploadFile = File(...)):
         "message": "Brand compliance prompt successfully generated."
     }
 
-#llava_engine = None
-
-#@app.on_event("startup")
-#def load_model():
-#    global llava_engine
-#    llava_engine = LLaVAEngine()
-
-
 # Test: curl -X POST http://127.0.0.1:8000/evaluate_brand_compliance_wAPI -F "brand_kit=@C:\Users\ander\OneDrive - University of Copenhagen\Desktop\Neurons\Neurons_brand_kit.pdf" -F "image_file=@C:\Users\ander\OneDrive - University of Copenhagen\Desktop\Neurons\neurons_1.png"
 @app.post("/evaluate_brand_compliance_wAPI")
 async def evaluate_brand_compliance(
@@ -60,6 +55,9 @@ async def evaluate_brand_compliance(
     if model_name == "ChatGPT-4o":
         prompt = build_compliance_prompt(brand_data)
         response = GPT_4o_response(image_bytes, prompt)
+    # elif model_name == "Qwen-3b":
+    #     prompt = build_compliance_prompt_qwen(brand_data)
+    #     response = Qwen_response(image_bytes, prompt)
     else:
         raise HTTPException(status_code=400, detail=f"Unknown model: {model_name}")
 
@@ -68,7 +66,7 @@ async def evaluate_brand_compliance(
         "model_output": response
     }
 
-    # Log to console so you see exactly what’s being returned
+    # Log to console to see what is being returned
     logging.info(f"Returning API response: {result}")
 
     return result

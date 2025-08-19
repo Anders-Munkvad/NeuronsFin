@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
-# Safe to access the environment variable
+# Access the environment variable
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def GPT_4o_response(image_bytes: bytes, prompt: str) -> str:
