@@ -49,6 +49,7 @@ The most important part of the code is the **image_evaluation.razor**. This is a
 
 ## Running the Project
 
+### Using Docker (recommended)
 This project uses **Docker Compose** for setup and deployment.
 
 1. Make sure you have **Docker** and **Docker Compose** installed.
@@ -57,6 +58,27 @@ This project uses **Docker Compose** for setup and deployment.
 
    ```bash
    docker compose up --build
+
+### Development mode
+
+#### Backend (FastAPI):
+
+1. Create and activate a Python environment
+2. Install dependencies (from requirements.txt):
+   ```bash
+   pip install -r requirements.txt
+4. Run the FastAPI app with Uvicorn:
+   ```bash
+   uvicorn app.api:app --reload --host 0.0.0.0 --port 8000
+5. The backend should be available at: http://localhost:8000
+
+#### Frontend (Blazor):
+
+1. Navigate to the Blazor project folder (most likely *Neuron_Blazor/*).
+2. Restore dependencies and run:
+   ```bash
+   dotnet run
+3. The frontend should be available at: http://localhost:5000
 
 ## Usage Examples
 ...
