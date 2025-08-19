@@ -86,3 +86,8 @@ This project uses **Docker Compose** for setup and deployment.
 ## Testing
 ...
 
+### Configure secrets
+Copy the example file and insert your own values (i.e., API key):
+```bash
+cp Neurons/.env.example Neurons/.env
+
