@@ -80,8 +80,30 @@ This project uses **Docker Compose** for setup and deployment.
    dotnet run
 3. The frontend should be available at: http://localhost:5000
 
-## Usage Examples
-...
+## Usage Example
+
+Here’s how a user interacts with the system step by step:
+
+1. **Upload an Image**  
+   The user uploads the picture they want to check for brand compliance.  
+
+   ![Upload Image](assets/Billede1.png)
+
+2. **Upload the Brand Compliance PDF**  
+   The brand kit (guidelines in PDF format) is uploaded for requirements.  
+
+   ![Upload Brand Compliance PDF](assets/Billede2.png)
+
+3. **Choose a Model**  
+   The user selects which model should perform the evaluation (currently, only `ChatGPT-4o` is available).  
+
+   ![Choose Model](assets/Billede3.png)
+
+4. **View Model Output**  
+   The system evaluates the image against the brand guidelines and displays the compliance results.  
+
+   ![Model Output](assets/Billede4.png)
+
 
 ## Testing
 ...
