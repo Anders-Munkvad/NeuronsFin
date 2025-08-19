@@ -1,13 +1,8 @@
-# NeuronsFin
+# Project Structure & Brief description/documentation
 
-## Introduction
-...
+## Neurons (The API)
 
-## Project Structure
-
-### Neurons (The API)
-
-#### Project Files
+### Project Files
 - **extract_pdf.py**  
   Provides helper functions for extracting brand compliance information from PDF files using PyMuPDF (`fitz`).  
   Extracts: font styles, logo safe zone, logo colours, and full colour palette.
@@ -24,7 +19,7 @@
   - Building structured compliance prompts
   - Evaluating brand compliance of images using an LLM
 
-### Neurons_Blazor (Blazor Web Application)
+## Neurons_Blazor (Blazor Web Application)
 The most important part of the code is the **image_evaluation.razor**. This is a Blazor front-end page that provides a user interface for testing brand compliance evaluation. It connects directly to the FastAPI backend and allows users to upload assets, choose a model, and view evaluation results.
 
 **Main Features**
@@ -52,17 +47,16 @@ The most important part of the code is the **image_evaluation.razor**. This is a
 4. Click *Evaluate Brand Compliance*.
 5. See evaluation result (or errors) in the results panel.
 
-
-
-
-## Documentation
-...
-
-## Installation & Setup
-...
-
 ## Running the Project
-...
+
+This project uses **Docker Compose** for setup and deployment.
+
+1. Make sure you have **Docker** and **Docker Compose** installed.
+2. Clone the repository and navigate to the project root (where `docker-compose.yml` is located).
+3. Build and start the containers:
+
+   ```bash
+   docker compose up --build
 
 ## Usage Examples
 ...
