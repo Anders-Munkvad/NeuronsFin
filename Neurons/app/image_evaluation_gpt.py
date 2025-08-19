@@ -9,7 +9,13 @@ env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 # Access the environment variable
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise RuntimeError("OPENAI_API_KEY is not set. See README -> Configure secrets.")
+
+# Initialize the OpenAI client
+client = OpenAI(api_key=api_key)
+
 
 def GPT_4o_response(image_bytes: bytes, prompt: str) -> str:
     # Encode image to base64

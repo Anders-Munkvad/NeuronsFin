@@ -25,6 +25,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     results = extract_brand_compliance(contents)  # pass only the bytes
     return {"Requirements": results, "message": "Requirements"}
 
+# API function to build a compliance prompt.
 # Test: curl -X POST http://127.0.0.1:8000/extract_brand_compliance -F "file=@C:\Users\ander\OneDrive - University of Copenhagen\Desktop\Neurons\Neurons_brand_kit.pdf"
 @app.post("/build_compliance_prompt")
 async def upload_pdf(file: UploadFile = File(...)):
