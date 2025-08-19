@@ -133,13 +133,21 @@
                 else
                 {
                     <MudStack Spacing="3" Class="w-100">
-                        <MudText Typo="Typo.h6">Model Output</MudText>
-                        <MudPaper Class="pa-3 overflow-auto" Style="max-height:420px;">
-                            <pre style="white-space:pre-wrap;word-break:break-word;margin:0;">
-@evalResponse?.ModelOutput
+                        <MudText Typo="Typo.h5" Class="fw-bold">Model Output</MudText>
+                        <MudPaper Class="pa-3 overflow-auto"
+                                Style="max-height:420px; background-color:#fafafa; border:1px solid #ccc; border-radius:8px;">
+                            <pre style="white-space:pre-wrap;
+                                        word-break:break-word;
+                                        margin:0;
+                                        font-size:1.1rem;   /* make text bigger */
+                                        line-height:1.6;    /* add spacing between lines */
+                                        font-weight:500;    /* slightly bolder */
+                                        font-family: 'Fira Code', 'Consolas', monospace;">
+                    @evalResponse?.ModelOutput
                             </pre>
                         </MudPaper>
                     </MudStack>
+
                 }
             </MudPaper>
         </MudItem>
