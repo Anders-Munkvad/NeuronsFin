@@ -24,6 +24,37 @@
   - Building structured compliance prompts
   - Evaluating brand compliance of images using an LLM
 
+### Neurons_Blazor (Blazor Web Application)
+
+#### Description of the Web Application Implementation:
+
+- The most important part of the code is the **image_evaluation.razor**. This is a Blazor front-end page that provides a user interface for testing brand compliance evaluation. It connects directly to the FastAPI backend and allows users to upload assets, choose a model, and view evaluation results.
+**Main Features**
+- **Upload controls** (left column):
+  - Upload an **image** (preview is displayed).
+  - Upload a **brand kit PDF** (validated on upload).
+  - Select a **model** (default: `ChatGPT-4o`, others selectable (NOTE: If they are implemented in the backend, i.e., the API)).
+  - Start evaluation with an **Evaluate Brand Compliance** button.
+- **Evaluation output** (right column):
+  - Shows progress with a loading spinner while the API is called.
+  - Displays either an instructional message (before evaluation) or the **model’s output** (after evaluation).
+  - Handles and displays errors if something goes wrong.
+
+**Implementation details**
+- Built with **MudBlazor** components for a modern UI (cards, alerts, file uploads, buttons).
+- Uses **`HttpClientFactory`** to call the FastAPI backend (`/evaluate_brand_compliance_wAPI`).
+- Sends both the uploaded **image** and **brand kit PDF** as multipart form data, along with the selected model name.
+- Uses **state flags** (`imageOk`, `pdfOk`, `isLoading`, `BothOk`) to enable/disable UI actions and provide user feedback.
+- Responses from the backend are deserialized into an `ImageEvaluationResponse` model and displayed in the UI.
+
+**User Flow**
+1. Upload an image → see preview.
+2. Upload a brand kit (PDF).
+3. Select a model.
+4. Click *Evaluate Brand Compliance*.
+5. See evaluation result (or errors) in the results panel.
+
+
 
 
 ## Documentation
