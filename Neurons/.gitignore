@@ -1,0 +1,15 @@
+# Don't track secrets
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VSCode settings (optional)
+.vscode/
+
+# Jupyter files (optional)
+.ipynb_checkpoints/
+

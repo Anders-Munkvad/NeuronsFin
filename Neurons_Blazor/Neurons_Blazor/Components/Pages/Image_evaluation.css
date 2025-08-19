@@ -1,0 +1,4 @@
+.sticky-col {
+  position: sticky;
+  top: 16px;   /* keeps the left panel visible while scrolling */
+}

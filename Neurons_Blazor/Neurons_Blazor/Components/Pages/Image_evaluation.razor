@@ -1,0 +1,255 @@
+﻿@page "/image_evaluation2"
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using System.Linq
+@using Neurons_Types
+@using System.Net.Http.Headers
+@using System.Net.Http.Json
+@using MudBlazor
+@inject IHttpClientFactory HttpClientFactory
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-6">
+    <MudGrid Spacing="3">
+        <!-- LEFT: Controls (sticky) -->
+        <MudItem xs="12" md="4" lg="3">
+            <MudStack Spacing="3" Class="sticky-col">
+
+                @if (BothOk)
+                {
+                    <MudAlert Severity="Severity.Success" Variant="Variant.Filled" Dense="true" Elevation="0">
+                        ✅ Files ready — you can now evaluate brand compliance.
+                    </MudAlert>
+                }
+
+                <!-- Section: Image -->
+                <MudCard>
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Upload Picture</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudFileUpload T="IBrowserFile"
+                                       FilesChanged="OnImageFileChanged"
+                                       Accept="image/*"
+                                       MaxFiles="1">
+                            <ActivatorContent>
+                                <MudFab Color="Color.Secondary"
+                                        StartIcon="@Icons.Material.Filled.Image"
+                                        Label="Load picture" />
+                            </ActivatorContent>
+                        </MudFileUpload>
+
+                        @if (imageOk)
+                        {
+                            <MudAlert Severity="Severity.Success" Dense="true" Class="mt-2">
+                                Image uploaded: <b>@uploadedImage?.Name</b>
+                            </MudAlert>
+                        }
+
+                        @if (imagePreview != null)
+                        {
+                            <MudDivider Class="my-2" />
+                            <img src="@imagePreview" style="max-width:100%; border-radius:8px;" />
+                        }
+                    </MudCardContent>
+                </MudCard>
+
+                <!-- Section: PDF -->
+                <MudCard>
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Upload Brand Kit (PDF)</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudFileUpload T="IBrowserFile"
+                                       FilesChanged="OnBrandKitFileChanged"
+                                       Accept="application/pdf"
+                                       MaxFiles="1">
+                            <ActivatorContent>
+                                <MudButton Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload">
+                                    Upload PDF
+                                </MudButton>
+                            </ActivatorContent>
+                        </MudFileUpload>
+
+                        @if (pdfOk)
+                        {
+                            <MudAlert Severity="Severity.Success" Dense="true" Class="mt-2">
+                                PDF uploaded: <b>@uploadedBrandKit?.Name</b>
+                            </MudAlert>
+                        }
+                    </MudCardContent>
+                </MudCard>
+
+                <!-- Section: Model -->
+                <MudCard>
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Choose Model</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudSelect Label="Model"
+                                   @bind-Value="selectedModel">
+                            @foreach (var m in models)
+                            {
+                                <MudSelectItem Value="@m">@m</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudCardContent>
+                </MudCard>
+
+                <!-- Action -->
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Disabled="@(!CanEvaluate || isLoading)"
+                           OnClick="CallImageEvaluation"
+                           StartIcon="@Icons.Material.Filled.PlayArrow">
+                    @(isLoading ? "Evaluating..." : "Evaluate Brand Compliance")
+                </MudButton>
+
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <MudAlert Severity="Severity.Error">@error</MudAlert>
+                }
+            </MudStack>
+        </MudItem>
+
+        <!-- MIDDLE: Result / Demo area -->
+        <MudItem xs="12" md="8" lg="9">
+            <MudPaper Elevation="1" Class="pa-6 d-flex align-center justify-center" Style="min-height: 260px;">
+                @if (isLoading)
+                {
+                    <MudStack AlignItems="AlignItems.Center" Spacing="2">
+                        <MudProgressCircular Indeterminate="true" />
+                        <MudText Typo="Typo.subtitle1">Evaluating…</MudText>
+                    </MudStack>
+                }
+                else if (evalResponse is null)
+                {
+                    <MudText Class="mud-text-secondary">
+                        Upload an image + PDF on the left, choose a model, then click <b>Evaluate</b>.
+                    </MudText>
+                }
+                else
+                {
+                    <MudStack Spacing="3" Class="w-100">
+                        <MudText Typo="Typo.h6">Model Output</MudText>
+                        <MudPaper Class="pa-3 overflow-auto" Style="max-height:420px;">
+                            <pre style="white-space:pre-wrap;word-break:break-word;margin:0;">
+@evalResponse?.ModelOutput
+                            </pre>
+                        </MudPaper>
+                    </MudStack>
+                }
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private IBrowserFile? uploadedImage;
+    private IBrowserFile? uploadedBrandKit;
+    private string? imagePreview;
+    private bool isLoading;
+    private string? error;
+    private ImageEvaluationResponse? evalResponse;
+
+    private bool imageOk;
+    private bool pdfOk;
+    private bool BothOk => imageOk && pdfOk;
+
+    [Inject] private HttpClient Http { get; set; } = default!;
+    private bool CanEvaluate => uploadedImage is not null && uploadedBrandKit is not null;
+
+    // Model select
+    private string selectedModel { get; set; } = "ChatGPT-4o";
+    private string[] models = { "ChatGPT-4o", "Model 2", "Nodel 3" };
+
+    private async Task OnImageFileChanged(IBrowserFile file)
+    {
+        uploadedImage = file;
+        imageOk = uploadedImage != null;
+
+        var resized = await file.RequestImageFileAsync("image/png", 600, 500);
+        using var stream = resized.OpenReadStream(10 * 1024 * 1024);
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+        imagePreview = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+        StateHasChanged();
+    }
+
+    private Task OnBrandKitFileChanged(IBrowserFile file)
+    {
+        uploadedBrandKit = file;
+        pdfOk = uploadedBrandKit != null;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private async Task CallImageEvaluation()
+    {
+
+        if (!CanEvaluate) return;
+
+        error = null;
+        evalResponse = null;
+        isLoading = true;
+
+        try
+        {
+            // Prepare image bytes
+            var resizedImage = await uploadedImage!.RequestImageFileAsync("image/png", 600, 500);
+            byte[] imageBytes;
+            using (var s = resizedImage.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024))
+            using (var ms = new MemoryStream())
+            {
+                await s.CopyToAsync(ms);
+                imageBytes = ms.ToArray();
+            }
+
+            // Prepare PDF stream
+            using var pdfStream = uploadedBrandKit!.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+
+            // Build multipart content
+            using var form = new MultipartFormDataContent();
+
+            var pdfContent = new StreamContent(pdfStream);
+            pdfContent.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
+            form.Add(pdfContent, "brand_kit", uploadedBrandKit.Name);
+
+            var imgContent = new ByteArrayContent(imageBytes);
+            imgContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+            form.Add(imgContent, "image_file", uploadedImage.Name);
+
+            // Add model choice
+            form.Add(new StringContent(selectedModel), "model_name");
+
+            // Call FastAPI endpoint
+            var api = HttpClientFactory.CreateClient("Api");
+            var response = await api.PostAsync("evaluate_brand_compliance_wAPI", form);
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                error = $"Upload failed: {(int)response.StatusCode} {response.ReasonPhrase}\n{body}";
+                return;
+            }
+
+            evalResponse = JsonSerializer.Deserialize<ImageEvaluationResponse>(
+                body,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            if (evalResponse == null)
+                error = "Could not parse API response.";
+        }
+        catch (Exception ex)
+        {
+            error = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+}

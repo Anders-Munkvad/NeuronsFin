@@ -1,0 +1,60 @@
+﻿@page "/ping"
+
+<PageTitle>Ping API</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Elevation="2" Class="pa-6 text-center">
+        <MudText Typo="Typo.h4" Color="Color.Primary" GutterBottom="true">
+            API Connectivity Check
+        </MudText>
+
+        <MudText Typo="Typo.subtitle2" Class="mud-text-secondary mb-4">
+            Use the button below to test if the backend is reachable.
+        </MudText>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="PingApi"
+                   Disabled="@isPinging"
+                   StartIcon="@Icons.Material.Filled.Wifi">
+            @(isPinging ? "Pinging..." : "Ping API")
+        </MudButton>
+
+        @if (!string.IsNullOrEmpty(pingResult))
+        {
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.subtitle1">
+                <b>Ping result:</b> @pingResult
+            </MudText>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private bool isPinging = false;
+    private string? pingResult;
+
+    [Inject] private HttpClient Http { get; set; } = default!;
+
+    private async Task PingApi()
+    {
+        isPinging = true;
+        pingResult = null;
+
+        try
+        {
+            var text = await Http.GetStringAsync("http://127.0.0.1:8000/");
+            pingResult = $"✅ OK: {text}";
+            Console.WriteLine($"Ping OK: {text}");
+        }
+        catch (Exception ex)
+        {
+            pingResult = $"❌ FAIL: {ex.Message}";
+            Console.WriteLine($"Ping FAIL: {ex}");
+        }
+        finally
+        {
+            isPinging = false;
+        }
+    }
+}

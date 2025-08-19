@@ -1,0 +1,39 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-10">
+    <MudPaper Elevation="2" Class="pa-6 text-center">
+        <MudText Typo="Typo.h3" Color="Color.Primary" GutterBottom="true">
+            Neurons Brand Compliance Assistant
+        </MudText>
+
+        <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-4">
+            Ensure your marketing assets follows brand compliance guidelines with AI-powered checks.
+        </MudText>
+
+
+        <MudDivider Class="my-4" />
+
+        <MudStack Spacing="2" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.body1">
+                • Upload your <b>brand kit (PDF)</b> with logos, fonts, and colors.<br />
+                • Add a <b>marketing image</b> you want evaluated.<br />
+                • Choose the AI model and let the system score compliance.
+            </MudText>
+
+            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                Fast, consistent, and always aligned with your brand identity.
+            </MudText>
+        </MudStack>
+
+        <MudDivider Class="my-4" />
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Href="/image_evaluation2"
+                   StartIcon="@Icons.Material.Filled.PlayArrow">
+            Get Started
+        </MudButton>
+    </MudPaper>
+</MudContainer>
