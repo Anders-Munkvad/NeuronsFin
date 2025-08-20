@@ -1,4 +1,4 @@
-# Project Structure & Brief description/documentation
+# Case study @ Neurons
 
 ## Table of Contents
 - [Project Structure & Documentation](#project-structure--brief-descriptiondocumentation)
@@ -121,7 +121,11 @@ Here’s how a user interacts with the system step by step:
 
 
 ## Testing
-...
+Unit testing is somewhat limited, and currently only tests the extraction of brand compliance requirements from a PDF.
+
+1. Running the tests:
+   ```bash
+   pytest -q -W ignore::DeprecationWarning
 
 ### Configure secrets
 Copy the example file and insert your own values (i.e., API key):
