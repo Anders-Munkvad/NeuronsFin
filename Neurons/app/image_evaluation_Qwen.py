@@ -4,7 +4,6 @@ import torch
 from transformers import AutoProcessor, AutoModelForVision2Seq
 
 # Load once at import (so container warms the model only once)
-# You can switch to "Qwen/Qwen2.5-VL-7B-Instruct" if you have GPU VRAM.
 MODEL_ID = "Qwen/Qwen2.5-VL-3B-Instruct"
 
 processor = AutoProcessor.from_pretrained(MODEL_ID)

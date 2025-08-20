@@ -1,3 +1,5 @@
+# This function simply builds a compliance prompt for the Gwen model, based on extracted data (brand_data). These are the results
+# which is returned in the format that is returned from extract_brand_compliance, i.e., a dict.
 def build_compliance_prompt_qwen(brand_data: dict) -> str:
     font_styles = brand_data.get("font_styles", {})
     logo_safezone = brand_data.get("logo_safezone", {})

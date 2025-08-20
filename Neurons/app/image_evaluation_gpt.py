@@ -16,7 +16,7 @@ if not api_key:
 # Initialize the OpenAI client
 client = OpenAI(api_key=api_key)
 
-
+# Get response:
 def GPT_4o_response(image_bytes: bytes, prompt: str) -> str:
     # Encode image to base64
     encoded_image = base64.b64encode(image_bytes).decode("utf-8")

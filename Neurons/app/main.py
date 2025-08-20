@@ -37,25 +37,32 @@ async def upload_pdf(file: UploadFile = File(...)):
         "message": "Brand compliance prompt successfully generated."
     }
 
+# The function that will get called in the frontend to evaluate brand compliance, given an image and a PDF
+# Error handling in terms of uploading is mostly handled in the frontend, and its associated backend (C# code)
+#    - Look at "image_evaluation.razor" for more information 
+
 # Test: curl -X POST http://127.0.0.1:8000/evaluate_brand_compliance_wAPI -F "brand_kit=@C:\Users\ander\OneDrive - University of Copenhagen\Desktop\Neurons\Neurons_brand_kit.pdf" -F "image_file=@C:\Users\ander\OneDrive - University of Copenhagen\Desktop\Neurons\neurons_1.png"
 @app.post("/evaluate_brand_compliance_wAPI")
 async def evaluate_brand_compliance(
     request: Request,
     response: Response,
-    brand_kit: UploadFile = File(...),
-    image_file: UploadFile = File(...),
+    brand_kit: UploadFile = File(...), # PDF
+    image_file: UploadFile = File(...), # Image
     model_name: str = Form(...),
 ):
-    # correlate logs <-> response
+    # Small amount of logging
     request_id = request.headers.get("X-Request-ID") or uuid.uuid4().hex
     response.headers["X-Request-ID"] = request_id
 
     try:
-        brand_bytes = await brand_kit.read()
-        image_bytes = await image_file.read()
+        brand_bytes = await brand_kit.read() # Bytes of brand compliance
+        image_bytes = await image_file.read() # Bytes of image
 
+        # Extract brand compliance from the pdf byes
         brand_data = extract_brand_compliance(brand_bytes)
 
+        # Logic regarding choosing of model.
+        # As of now, only the "ChatGPT-4o" is available, but it is obviously quite easy to implement others
         if model_name == "ChatGPT-4o":
             prompt = build_compliance_prompt(brand_data)
             model_output = GPT_4o_response(image_bytes, prompt)
@@ -70,11 +77,11 @@ async def evaluate_brand_compliance(
         result = {
             "prompt_used": prompt,
             "model_output": model_output,
-            "status": "ok",                # extra status the UI can ignore
-            "request_id": request_id,      # helpful in UI/logs
+            "status": "ok",                # status and request_id is ignored in the UI/frontend, however can be helpful for logging
+            "request_id": request_id,      
         }
 
-        # success log with light context (don’t log raw bytes or secrets)
+        # success log with light context
         log.info(
             "evaluate_brand_compliance ok",
             extra={
@@ -84,13 +91,11 @@ async def evaluate_brand_compliance(
         return result
 
     except HTTPException:
-        # already a known client/server error—let FastAPI return it
         raise
     except Exception as e:
-        # unexpected error: **log stack trace** and surface a clean 500
+        # unexpected error:
         log.exception(
             "evaluate_brand_compliance failed",
             extra={"request_id": request_id},
         )
-        # keep your existing error shape approach; message is safe & non-leaky
         raise HTTPException(status_code=500, detail="Internal server error")

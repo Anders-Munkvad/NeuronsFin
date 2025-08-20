@@ -155,6 +155,7 @@
 </MudContainer>
 
 @code {
+    // A bunch of inits we need later
     private IBrowserFile? uploadedImage;
     private IBrowserFile? uploadedBrandKit;
     private string? imagePreview;
@@ -171,8 +172,10 @@
 
     // Model select
     private string selectedModel { get; set; } = "ChatGPT-4o";
-    private string[] models = { "ChatGPT-4o", "Gwen-3b", "Nodel 3" };
+    private string[] models = { "ChatGPT-4o", "Gwen-3b"};
 
+    // Small function to handle the uploading of an image
+    // Also gives an "imagePreview" so the user can see what image the uploaded
     private async Task OnImageFileChanged(IBrowserFile file)
     {
         uploadedImage = file;
@@ -186,6 +189,7 @@
         StateHasChanged();
     }
 
+    // Just a simple function to handle uploading of a PDF file - also checks whether or not a file has actually been uploaded
     private Task OnBrandKitFileChanged(IBrowserFile file)
     {
         uploadedBrandKit = file;
@@ -194,6 +198,11 @@
         return Task.CompletedTask;
     }
 
+    // Actual function that handles logic regarding image evaluation.
+    // Can only be called if both image and pdf has been successfully uploaded
+    // This function also calls the API, and handles the return values given from the API
+    // The function essentially just takes all of the input given on the frontend, processes it, calls the API with this, and gets a return answer in return
+    // For more information, see the GitHub as to how it works. 
     private async Task CallImageEvaluation()
     {
 
@@ -237,16 +246,18 @@
             var response = await api.PostAsync("evaluate_brand_compliance_wAPI", form);
             var body = await response.Content.ReadAsStringAsync();
 
+            // Error
             if (!response.IsSuccessStatusCode)
             {
                 error = $"Upload failed: {(int)response.StatusCode} {response.ReasonPhrase}\n{body}";
                 return;
             }
 
+            // The actual response
             evalResponse = JsonSerializer.Deserialize<ImageEvaluationResponse>(
                 body,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
+            // Error
             if (evalResponse == null)
                 error = "Could not parse API response.";
         }

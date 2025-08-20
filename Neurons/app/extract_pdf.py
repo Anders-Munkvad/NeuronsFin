@@ -1,6 +1,13 @@
 import fitz  # PyMuPDF
 from io import BytesIO
 
+# Functions to extract brand compliance requirements using fitz (PyMuPDF)
+
+# - The functions works by reading through the PDF and extracing information, based on keyword matches
+# - E.g., font styles are extracted by looking at the words "primary" and "seconday" and extracting the fonts based on this
+# - This is obviously non-generalizable, as if the structure of the PDF changes, these functions might not
+#   necesarilly perform as expected. 
+
 def extract_font_styles(pdf_path):
     doc = fitz.open(stream=BytesIO(pdf_path), filetype="pdf")
     font_styles = {}
@@ -92,7 +99,6 @@ def extract_palette_styles(pdf_path):
     return logo_colour_palette
 
 # The function that will be used in the API
-# Make it more readable what each is? Just return a string along with it?
 def extract_brand_compliance(pdf_bytes):
     return {
         "font_styles": extract_font_styles(pdf_bytes),
