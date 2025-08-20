@@ -1,4 +1,19 @@
-# Project Structure & Brief description/documentation
+# Case study @ Neurons
+
+## Table of Contents
+- [Project Structure & Documentation](#project-structure--brief-descriptiondocumentation)
+  - [Neurons (The API)](#neurons-the-api)
+    - [Project Files](#project-files)
+  - [Neurons_Blazor (Blazor Web Application)](#neurons_blazor-blazor-web-application)
+- [Running the Project](#running-the-project)
+  - [Using Docker (recommended)](#using-docker-recommended)
+  - [Development mode](#development-mode)
+    - [Backend (FastAPI)](#backend-fastapi)
+    - [Frontend (Blazor)](#frontend-blazor)
+- [Usage Example](#usage-example)
+- [Testing](#testing)
+- [Configure secrets](#configure-secrets)
+
 
 ## Neurons (The API)
 
@@ -80,11 +95,37 @@ This project uses **Docker Compose** for setup and deployment.
    dotnet run
 3. The frontend should be available at: http://localhost:5000
 
-## Usage Examples
-...
+## Usage Example
+
+Here’s how a user interacts with the system step by step:
+
+1. **Upload an Image**  
+   The user uploads the picture they want to check for brand compliance.  
+
+   ![Upload Image](assets/Billede1.png)
+
+2. **Upload the Brand Compliance PDF**  
+   The brand kit (guidelines in PDF format) is uploaded for requirements.  
+
+   ![Upload Brand Compliance PDF](assets/Billede2.png)
+
+3. **Choose a Model**  
+   The user selects which model should perform the evaluation (currently, only `ChatGPT-4o` is available).  
+
+   ![Choose Model](assets/Billede3.png)
+
+4. **View Model Output**  
+   The system evaluates the image against the brand guidelines and displays the compliance results.  
+
+   ![Model Output](assets/Billede4.png)
+
 
 ## Testing
-...
+Unit testing is somewhat limited, and currently only tests the extraction of brand compliance requirements from a PDF.
+
+1. Running the tests:
+   ```bash
+   pytest -q -W ignore::DeprecationWarning
 
 ### Configure secrets
 Copy the example file and insert your own values (i.e., API key):
