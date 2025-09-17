@@ -1,4 +1,4 @@
-# Case study @ Neurons
+# Automated brand compliance checks
 
 ## Table of Contents
 - [Project Structure & Documentation](#project-structure--brief-descriptiondocumentation)
